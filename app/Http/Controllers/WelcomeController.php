@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\BalanceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Tochka\JsonRpcClient\Exceptions\ResponseException;
+use Tochka\JsonRpcClient\Exceptions\JsonRpcClientException;
 
 class WelcomeController extends Controller
 {
@@ -27,7 +27,7 @@ class WelcomeController extends Controller
         $balance = null;
         try {
             $balance = $balanceService->getUsersBalance($userId);
-        } catch (ResponseException $exception) {
+        } catch (JsonRpcClientException $exception) {
             Log::error($exception);
             $errors[] = 'Error receiving user balance';
         }
@@ -35,7 +35,7 @@ class WelcomeController extends Controller
         $history = null;
         try {
             $history = $balanceService->getBalanceHistory(self::PAGE_LIMIT, $page, $userId);
-        } catch (ResponseException $exception) {
+        } catch (JsonRpcClientException $exception) {
             Log::error($exception);
             $errors[] = 'Error receiving payment history';
         }

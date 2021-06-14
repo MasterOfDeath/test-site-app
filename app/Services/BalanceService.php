@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entities\UserBalance;
 use Illuminate\Support\Facades\Log;
+use Tochka\JsonRpcClient\Exceptions\JsonRpcClientException;
 
 class BalanceService
 {
@@ -18,7 +19,7 @@ class BalanceService
      * Get users balance
      * @param int $userId
      * @return null|UserBalance
-     * @throws \Tochka\JsonRpcClient\Exceptions\ResponseException
+     * @throws \Tochka\JsonRpcClient\Exceptions\JsonRpcClientException
      */
     public function getUsersBalance(int $userId): ?UserBalance
     {
@@ -32,7 +33,7 @@ class BalanceService
             $validator = UserBalance::validate($data);
             if ($validator->fails()) {
                 Log::error($validator->errors());
-                throw new \Exception('Wrong response');
+                throw new JsonRpcClientException(0, 'Wrong response');
             }
 
             $result = new UserBalance($data);
@@ -49,7 +50,7 @@ class BalanceService
      * @return null|array
      *         - data  UserBalance[] Paginated history
      *         - total int           Total records
-     * @throws \Tochka\JsonRpcClient\Exceptions\ResponseException
+     * @throws \Tochka\JsonRpcClient\Exceptions\JsonRpcClientException
      */
     public function getBalanceHistory(int $limit, int $page, int $userId): ?array
     {
@@ -67,7 +68,7 @@ class BalanceService
                 $validator = UserBalance::validate($item);
                 if ($validator->fails()) {
                     Log::error($validator->errors());
-                    throw new \Exception('Wrong response');
+                    throw new JsonRpcClientException(0, 'Wrong response');
                 }
 
                 $result['data'][] = new UserBalance($item);
