@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\BalanceService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Tochka\JsonRpcClient\Exceptions\ResponseException;
 
 class WelcomeController extends Controller
 {
@@ -21,8 +23,22 @@ class WelcomeController extends Controller
 
         $userId = $request->user()->id;
 
-        $balance = $balanceService->getUsersBalance($userId);
-        $history = $balanceService->getBalanceHistory(self::PAGE_LIMIT, $page, $userId);
+        $errors = [];
+        $balance = null;
+        try {
+            $balance = $balanceService->getUsersBalance($userId);
+        } catch (ResponseException $exception) {
+            Log::error($exception);
+            $errors[] = 'Error receiving user balance';
+        }
+
+        $history = null;
+        try {
+            $history = $balanceService->getBalanceHistory(self::PAGE_LIMIT, $page, $userId);
+        } catch (ResponseException $exception) {
+            Log::error($exception);
+            $errors[] = 'Error receiving payment history';
+        }
 
         list($nextLink, $previousLink) = array_values(self::getPaginateParams(
             $request,
@@ -31,7 +47,8 @@ class WelcomeController extends Controller
             $history ? $history['total'] : 0
         ));
 
-        return view('welcome', compact('balance', 'history', 'nextLink', 'previousLink'));
+        return view('welcome', compact('balance', 'history', 'nextLink', 'previousLink'))
+            ->with('errors', $errors);
     }
 
     /**

@@ -18,7 +18,7 @@ class BalanceService
      * Get users balance
      * @param int $userId
      * @return null|UserBalance
-     * @throws \Exception
+     * @throws \Tochka\JsonRpcClient\Exceptions\ResponseException
      */
     public function getUsersBalance(int $userId): ?UserBalance
     {
@@ -49,7 +49,7 @@ class BalanceService
      * @return null|array
      *         - data  UserBalance[] Paginated history
      *         - total int           Total records
-     * @throws \Exception
+     * @throws \Tochka\JsonRpcClient\Exceptions\ResponseException
      */
     public function getBalanceHistory(int $limit, int $page, int $userId): ?array
     {
