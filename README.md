@@ -13,3 +13,8 @@
 Доступны 2 пользователя:
 - test1@test.com, password: qweasd123
 - test2@test.com, password: qweasd123
+
+
+## Url
+
+http://localhost:8000/
